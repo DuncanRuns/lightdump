@@ -2,10 +2,8 @@ package com.dariasc.lightdump;
 
 import com.mojang.brigadier.Command;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +21,7 @@ public class Lightdump implements ModInitializer {
 
     public static final String MOD_NAME = "Lightdump";
     public static Logger LOGGER = LogManager.getLogger();
+    public static Command<ServerCommandSource> COMMAND;
 
     public static void log(Level level, String message) {
         LOGGER.log(level, "[" + MOD_NAME + "] " + message);
@@ -30,7 +29,7 @@ public class Lightdump implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Command<ServerCommandSource> command = context -> {
+        COMMAND = context -> {
             ServerPlayerEntity player = context.getSource().getPlayer();
             ChunkManager chunkManager = player.getServerWorld().getChunkManager();
             ChunkLightingView block = chunkManager.getLightingProvider().get(LightType.BLOCK);
@@ -60,7 +59,7 @@ public class Lightdump implements ModInitializer {
 
             File file = new File(name);
             try {
-                BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file))) ;
+                BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
                 dump.forEach((key, value) -> {
                     if (value == 0) {
                         return;
@@ -79,9 +78,5 @@ public class Lightdump implements ModInitializer {
 
             return 0;
         };
-
-        CommandRegistrationCallback.EVENT.register(((dispatcher, dedicated) -> {
-            dispatcher.register(CommandManager.literal("lightdump").executes(command));
-        }));
     }
 }

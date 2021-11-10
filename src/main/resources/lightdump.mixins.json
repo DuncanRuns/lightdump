@@ -4,6 +4,7 @@
   "package": "com.dariasc.lightdump.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "CommandManagerMixin"
   ],
   "client": [
   ],
